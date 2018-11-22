@@ -22,29 +22,36 @@ def StorePrimes(numberOfPrimes):
 
     return primes
 
-def primeFactorization(number, primeFactors):
-    initNbr = number
-    prodAllFact = 1
-    for potentialPrime in range(1, number + 1):
-        counter_divisions = 0
-        if number % potentialPrime == 0:
-            for j in range(1, potentialPrime + 1):
-                if potentialPrime % j == 0:
-                    counter_divisions += 1
+def primeFactorization(number, primeFactors = [], prodAllFact = 1):
+    initnumber = number
+    print('initnumber: ', initnumber)
+    print('allfrac: ', prodAllFact)
+    if prodAllFact != initnumber:
+        for potentialPrime in range(1, number + 1):
+            print('number: ', potentialPrime)
+            counter_divisions = 0
+            if number % potentialPrime == 0:
+                for j in range(1, potentialPrime + 1):
+                    if potentialPrime % j == 0:
+                        counter_divisions += 1
 
-            if counter_divisions == 2:
-                primeFactors.append(potentialPrime)
-                number = int(number / potentialPrime)
-                primeFactorization(number, primeFactors)
-                prodAllFact *= potentialPrime
-                if prodAllFact == initNbr:
-                    return primeFactors
+                if counter_divisions == 2:
+                    print('added prime: ', potentialPrime)
+                    primeFactors.append(potentialPrime)
+                    print('number1: ', number)
+                    number = int(number / potentialPrime)
+                    print('number2: ', number)
+                    prodAllFact *= potentialPrime
+                    primeFactorization(number, primeFactors, prodAllFact)
+                    break
+
+    return primeFactors
 
     # return primeFactors
-
-
-primeFactors = []
-print(primeFactorization(16, primeFactors))
+#primeFactors = []
+initnumber = 9
+print(primeFactorization(9))
+#primeFactorization(16)
 
 """
 for k in range(1, 100):
