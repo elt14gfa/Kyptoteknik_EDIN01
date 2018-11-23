@@ -92,12 +92,24 @@ nbrFactored = 9
 
 # print(binaryMatrix())
 
-"""
-for k in range(1, 100):
-    for j in range(1, 100):
-        r = int(math.sqrt(k*test_N)) + j
-        print('k: ', k, ' j: ', j, ' r: ', r)
-        rsquared_modN = r*r % test_N
-        print(rsquared_modN)
-        # if rsquared_modN factors is in [ourprimes]:
-"""
+ourPrimes = storePrimes(10)
+listOfR = []
+counter = 1
+for k in range(2, 20):
+    for j in range(2, 15):
+        list = []
+        r = int(math.sqrt(k * test_N)) + j
+        rsquared_modN = (r * r) % test_N
+        factorized = primeFactorization(rsquared_modN, list)
+        for item in factorized:
+            isValid = True
+            if item not in ourPrimes:
+                isValid = False
+
+        if isValid and counter <= L and factorized not in listOfR:
+            # print('k: ', k, 'j: ', j)
+            # print('r squared: ', rsquared_modN)
+            listOfR.append(factorized)
+            counter += 1
+print(listOfR)
+
