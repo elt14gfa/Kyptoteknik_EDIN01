@@ -43,43 +43,6 @@ def primeFactorization(number, primeFactors=[], prodAllFact=1):
 
     return primeFactors
 
-
-"""
-Input: List with r^2 mod N
-Returns: Binary Matrix
-"""
-
-def binaryMatrix(rList):
-    nbrPrimes = storePrimes(1000)
-
-
-    binaryM = np.zeros((L, len(F)))
-    for i in range(0, len(rList)):
-        count = 0
-        oddOrEven = 0
-        for j in range(0, len(rList[i])):
-            if rList[i][j] == F[count]:
-                oddOrEven += 1
-
-            else:
-                if oddOrEven % 2 == 1:
-
-                    binaryM[i][count] = 1
-                oddOrEven = 1
-                count += 1
-
-                while rList[i][j] != F[count]:
-                    oddOrEven = 1
-                    count += 1
-                try:
-                    if rList[i][j+1] != None:
-                        pass
-                except IndexError:
-                    if rList[i][j] == F[count]:
-
-                        binaryM[i][count] = 1
-    return binaryM
-
 #print(binaryMatrix(listOfR))
 
 def newRFitForMatrix(rVector):
