@@ -4,7 +4,7 @@ import numpy as np
 
 our_N = 170527948450228765165631
 test_N = 16637
-L = 1000
+L = 12
 F = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 
 
@@ -26,6 +26,7 @@ def storePrimes(numberOfPrimes):
 
 
 def primeFactorization(number, primeFactors=[], prodAllFact=1):
+
     if prodAllFact != nbrFactored:
         for potentialPrime in range(1, number + 1):
             counter_divisions = 0
@@ -52,21 +53,20 @@ def binaryMatrix(rList):
     nbrPrimes = storePrimes(1000)
 
 
-    binaryM = np.zeros((12, len(F)))
+    binaryM = np.zeros((L, len(F)))
     for i in range(0, len(rList)):
         count = 0
         oddOrEven = 0
         for j in range(0, len(rList[i])):
             if rList[i][j] == F[count]:
                 oddOrEven += 1
-                print('equal')
+
             else:
                 if oddOrEven % 2 == 1:
-                    print('adding', F[count])
+
                     binaryM[i][count] = 1
                 oddOrEven = 1
                 count += 1
-                print(rList[i][j], F[count])
 
                 while rList[i][j] != F[count]:
                     oddOrEven = 1
@@ -76,28 +76,89 @@ def binaryMatrix(rList):
                         pass
                 except IndexError:
                     if rList[i][j] == F[count]:
-                        print('adding', F[count])
+
                         binaryM[i][count] = 1
+    return binaryM
 
+#print(binaryMatrix(listOfR))
 
+def newRFitForMatrix(rVector):
+    nbrPrimes = storePrimes(1000)
+
+    binaryVector = np.zeros((len(F)))
+    count = 0
+    oddOrEven = 0
+    for j in range(0, len(rVector)):
+        if rVector[j] == F[count]:
+            oddOrEven += 1
+
+        else:
+            if oddOrEven % 2 == 1:
+                binaryVector[count] = 1
+            oddOrEven = 1
+            count += 1
+
+            while rVector[j] != F[count]:
+                oddOrEven = 1
+                count += 1
+            try:
+                if rVector[j + 1] != None:
+                    pass
+            except IndexError:
+                if rVector[j] == F[count]:
+                    binaryVector[count] = 1
+    return binaryVector
+
+def getFactorizedList():
+    binaryM = None
+    #binaryM = np.zeros((1, len(F)))
+    counter = 0
+   # for k in range(2, 20):
+   #     for j in range(2, 15):
+    #r = int(math.sqrt(k * test_N)) + j
+    r1 = [225,261,291,292,317,343,413,431,458,469,473,395,490]
+    for r in r1:
+        list = []
+        rsquared_modN = (r * r) % test_N
+        factorized = primeFactorization(rsquared_modN, list)
+        for item in factorized:
+            isValid = True
+            if item not in F:
+                isValid = False
+        if isValid and counter <= L - 1:
+            binaryR = newRFitForMatrix(factorized)
+            print(r, factorized)
+            if binaryM is None:
+                binaryM = binaryR
+                counter += 1
+            else:
+                if counter == 1:
+                    if np.array_equal(binaryR,binaryM):
+                        exists = True
+                    else:
+                        exists = False
+                else:
+                    for row in binaryM:
+                        exists = False
+                       # if (binaryR == row).all():
+                        if np.array_equal(binaryR,row):
+                            exists = True
+                            break
+                # print('binary R: ', binaryR)
+                if exists == False:
+                    binaryM = np.vstack([binaryM, binaryR])
+                    counter += 1
+
+                    #print('k: ', k, 'j: ', j)
+                    # print('r squared: ', rsquared_modN)
+                    #listOfR.append(factorized)
 
     return binaryM
 
-rList = [[2, 3, 7, 17], [11, 11, 13], [2, 2, 2, 11, 17], [3, 3, 3, 7, 11]]
-# print(rList[0][0])
-print(binaryMatrix(rList))
 
-nbrFactored = 9
-# print(primeFactorization(nbrFactored))
+if __name__ == '__main__':
 
-# print(binaryMatrix())
+    nbrFactored = test_N
+    print(getFactorizedList())
 
-"""
-for k in range(1, 100):
-    for j in range(1, 100):
-        r = int(math.sqrt(k*test_N)) + j
-        print('k: ', k, ' j: ', j, ' r: ', r)
-        rsquared_modN = r*r % test_N
-        print(rsquared_modN)
-        # if rsquared_modN factors is in [ourprimes]:
-"""
+
