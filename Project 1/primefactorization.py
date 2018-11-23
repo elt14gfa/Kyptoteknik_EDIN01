@@ -1,6 +1,7 @@
 import math
 import sys
 import numpy as np
+from operator import add
 
 our_N = 170527948450228765165631
 test_N = 16637
@@ -90,7 +91,6 @@ def getFactorizedList():
                 isValid = False
         if isValid and counter <= L - 1:
             binaryR = newRFitForMatrix(factorized)
-            print(r, factorized)
             if binaryM is None:
                 binaryM = binaryR
                 counter += 1
@@ -112,20 +112,46 @@ def getFactorizedList():
                     binaryM = np.vstack([binaryM, binaryR])
                     counter += 1
 
-                    #print('k: ', k, 'j: ', j)
-                    # print('r squared: ', rsquared_modN)
-                    #listOfR.append(factorized)
-
     return binaryM
 
 
+def findSolution(binaryMatrix):
+    return
+
+
 if __name__ == '__main__':
-
     nbrFactored = test_N
-    print(getFactorizedList())
+    binaryMatrix = (getFactorizedList())
+    element = 0
+    rowCounterToRemove = 0
+
+    for row in binaryMatrix:
+        rowIterator = 0
+
+        try:
+            if row[element] == 1:
+                for row1 in binaryMatrix:
+                    if not np.array_equal(row, row1):
+                        if row1[element] == 1:
+                            additionRow = np.array(row)
+                            additionRow1 = np.array(row1)
+                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
+                            #print(binaryMatrix)
+                    rowIterator += 1
+            else:
+                rowCounterToRemove += 1
+
+
+        # print(binaryMatrix, '\n')
+
+        except IndexError:
+            break
+
+        if rowIterator == L - element:
+            binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
+            element += 1
+            rowCounterToRemove = 0
 
 
 
-
-
-
+    print(binaryMatrix)
