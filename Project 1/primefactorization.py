@@ -118,6 +118,16 @@ def getFactorizedList():
 def findSolution(binaryMatrix):
     return
 
+def getRowIndex(matrix, findRow):
+    counter = 0
+    for row in matrix:
+        if np.array_equal(row, findRow):
+            break
+        else:
+            counter += 1
+
+    return counter
+
 
 if __name__ == '__main__':
     nbrFactored = test_N
@@ -131,7 +141,7 @@ if __name__ == '__main__':
         try:
             if row[element] == 1:
                 for row1 in binaryMatrix:
-                    if not np.array_equal(row, row1):
+                    if getRowIndex(binaryMatrix, row1) > getRowIndex(binaryMatrix, row):
                         if row1[element] == 1:
                             additionRow = np.array(row)
                             additionRow1 = np.array(row1)
