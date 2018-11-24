@@ -1,6 +1,8 @@
 import math
 import sys
 import numpy as np
+import functools
+from operator import mul
 from operator import add
 
 our_N = 170527948450228765165631
@@ -74,6 +76,9 @@ def newRFitForMatrix(rVector):
     return binaryVector
 
 def getFactorizedList():
+    listFactorized = []
+    listOfBinaryR = []
+    chosen_r_values = []
     binaryM = None
     #binaryM = np.zeros((1, len(F)))
     counter = 0
@@ -85,12 +90,16 @@ def getFactorizedList():
         list = []
         rsquared_modN = (r * r) % test_N
         factorized = primeFactorization(rsquared_modN, list)
-        for item in factorized:
+        for prime in factorized:
             isValid = True
-            if item not in F:
+            if prime not in F:
                 isValid = False
-        if isValid and counter <= L - 1:
+        if isValid and counter <= L - 1 and factorized not in listFactorized:
             binaryR = newRFitForMatrix(factorized)
+            if not any((binaryR == x).all() for x in listOfBinaryR): # checks if the binary row already exists in the list
+                chosen_r_values.append(r)
+                listOfBinaryR.append(binaryR)
+                listFactorized.append(factorized)
             if binaryM is None:
                 binaryM = binaryR
                 counter += 1
@@ -112,7 +121,7 @@ def getFactorizedList():
                     binaryM = np.vstack([binaryM, binaryR])
                     counter += 1
 
-    return binaryM
+    return binaryM, chosen_r_values, listFactorized
 
 
 def findSolution(binaryMatrix):
@@ -128,9 +137,58 @@ def getRowIndex(matrix, findRow):
 
     return counter
 
+def computeGCD(x, y):
+    if x > y:
+        small = y
+    else:
+        small = x
+    for i in range(1, small + 1):
+        if ((x % i == 0) and (y % i == 0)):
+            gcd = i
+
+    return gcd
+
+def multiplicationOfSolutions(resultsVector):
+    prime_factor1 = 0
+    prime_factor2 = 0
+    matrix, r_values, factorized_values = getFactorizedList()
+    print('Values of r: ', r_values)
+    print('factorized_values: ', factorized_values)
+    for xresult in resultsVector:
+        r = 1
+        y= 1
+        counter = 0
+        for index in xresult:
+            if index == 1:
+                y *= functools.reduce(mul, factorized_values[counter]) # product of array
+
+                r *= r_values[counter]
+            counter += 1
+        r_modulo = r % test_N
+        y_sqrt = math.sqrt(y)
+        y_modulo = int(y_sqrt % test_N)
+        # print(r_modulo)
+        # print(y_modulo)
+        if y_modulo > r_modulo:
+            result = computeGCD(y_modulo - r_modulo, test_N)
+        else:
+            result = computeGCD(r_modulo - y_modulo, test_N)
+
+        if result != 1:
+            prime_factor1 = int(test_N/result)
+            prime_factor2 = int(test_N/prime_factor1)
+
+    return prime_factor1, prime_factor2
+
+
 
 if __name__ == '__main__':
     nbrFactored = test_N
+    resultsVector = [[1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]]
+    prime1, prime2 = multiplicationOfSolutions(resultsVector)
+    print('Prime factor 1: ', prime1)
+    print('Prime factor 2: ', prime2)
+    """
     binaryMatrix = (getFactorizedList())
     element = 0
     rowCounterToRemove = 0
@@ -164,9 +222,8 @@ if __name__ == '__main__':
             binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
             element += 1
             rowCounterToRemove = 0
-            print('element ', element)
-            #print('matrix: ', '\n', binaryMatrix)
+"""
 
 
 
-    print(binaryMatrix)
+
