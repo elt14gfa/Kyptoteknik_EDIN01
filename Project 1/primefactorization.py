@@ -137,30 +137,35 @@ if __name__ == '__main__':
 
     for row in binaryMatrix:
         rowIterator = 0
+        print('row :', '\n', row)
+
 
         try:
             if row[element] == 1:
-                for row1 in binaryMatrix:
-                    if getRowIndex(binaryMatrix, row1) > getRowIndex(binaryMatrix, row):
-                        if row1[element] == 1:
-                            additionRow = np.array(row)
-                            additionRow1 = np.array(row1)
-                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
-                            #print(binaryMatrix)
+                binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove+1], 0)
+                rowIterator = rowCounterToRemove+1
+                print('matrix: ', '\n', binaryMatrix)
+                print('editedmatrix: ', '\n', binaryMatrixEdited)
+                for row1 in binaryMatrixEdited:
+                    if row1[element] == 1:
+                        additionRow = np.array(row)
+                        additionRow1 = np.array(row1)
+                        binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
+                        # print(binaryMatrix)
                     rowIterator += 1
             else:
                 rowCounterToRemove += 1
-
-
         # print(binaryMatrix, '\n')
 
         except IndexError:
             break
 
-        if rowIterator == L - element:
+        if rowIterator == (L - element):
             binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
             element += 1
             rowCounterToRemove = 0
+            print('element ', element)
+            #print('matrix: ', '\n', binaryMatrix)
 
 
 
