@@ -1,23 +1,26 @@
 import numpy as np
 from operator import add
 from operator import mul
-import functools
+
+s = 0
+
+s = np.zeros(12)
+print('s', s)
 
 
-<<<<<<< HEAD
+b = np.eye(5,5)
+b[1][0] = 2
+print(b)
 
+
+a = [[0,1,1,1,1],[1,1,1,1,1]]
 yx = np.eye(5,5)
+print(a)
+print(len(a))
+a = [1, 1, 1, 1, 1]
+k=5
+for i in range(0,k):
+    print(k)
+    k -= 1
 
-print(yx)
-
-x = np.delete(yx, np.s_[0:1], 0)
-=======
-list = [2, 2, 2, 2, 1, 1, 2, 10]
-prod = functools.reduce(mul, list, 1)
-print(prod)
-
-
->>>>>>> 7ef9e55c417669768fad1e967fd05f1ea85c7a90
-
-print(x)
 

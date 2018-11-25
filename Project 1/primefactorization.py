@@ -123,9 +123,102 @@ def getFactorizedList():
 
     return binaryM, chosen_r_values, listFactorized
 
-
+"""
 def findSolution(binaryMatrix):
-    return
+
+        element = 0
+        rowCounterToRemove = 0
+        print('first binaryM: ', '\n', binaryMatrix)
+        for row in binaryMatrix:
+            rowIterator = 0
+            #print('row :', '\n', row)
+            try:
+                if row[element] == 1:
+                    binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove+1], 0)
+                    rowIterator = rowCounterToRemove+1
+                    print('matrix: ', '\n', binaryMatrix)
+                    print('editedmatrix: ', '\n', binaryMatrixEdited)
+                    for row1 in binaryMatrixEdited:
+                        if row1[element] == 1:
+                            additionRow = np.array(row)
+                            additionRow1 = np.array(row1)
+                            print('additionRow: ', '\n', additionRow)
+                            print('additionRow1: ', '\n', additionRow1)
+                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
+                            # print(binaryMatrix)
+                        rowIterator += 1
+                else:
+                    rowCounterToRemove += 1
+            # print(binaryMatrix, '\n')
+
+            except IndexError:
+                break
+
+            if rowIterator == (L - element):
+                binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
+                element += 1
+                rowCounterToRemove = 0
+                print('The final binary matrix: ', '\n', binaryMatrix)
+
+        return binaryMatrix
+"""
+
+
+def findSolution(binaryMatrix, element = 0, xSolution = np.eye(L,L), isNotZero = True):
+    rowCounterToRemove = 0
+
+    print('first binaryM: ', '\n', binaryMatrix)
+    if L - len(F) != len(binaryMatrix) or isNotZero:
+        print('isNotZero')
+        for row in binaryMatrix:
+            rowIterator = 0
+            # print('row :', '\n', row)
+            try:
+                if row[element] == 1:
+                    binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove + 1], 0)
+                    rowIterator = rowCounterToRemove + 1
+                    #print('matrix: ', '\n', binaryMatrix)
+                    #print('editedmatrix: ', '\n', binaryMatrixEdited)
+                    for row1 in binaryMatrixEdited:
+                        if row1[element] == 1:
+                            additionRow = np.array(row)
+                            additionRow1 = np.array(row1)
+                            #print('additionRow: ', '\n', additionRow)
+                            #print('additionRow1: ', '\n', additionRow1)
+                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
+                            xSolution[rowIterator] = (xSolution[rowIterator] + xSolution[rowCounterToRemove]) % 2
+                            # print(binaryMatrix)
+                        rowIterator += 1
+                else:
+                    rowCounterToRemove += 1
+            # print(binaryMatrix, '\n')
+
+            except IndexError:
+                break
+
+            if rowIterator == (L - element) or rowIterator == len(binaryMatrix):
+                xSolution = np.delete(xSolution, rowCounterToRemove, 0)
+                binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
+                element += 1
+                rowCounterToRemove = 0
+                print('The final binary matrix: ', '\n', binaryMatrix)
+                findSolution(binaryMatrix, element, xSolution, isNotZero)
+                break
+            elif rowCounterToRemove == len(binaryMatrix):
+                print(element, rowCounterToRemove)
+                element += 1
+                rowCounterToRemove = 0
+                print('The final binary matrix1: ', '\n', binaryMatrix)
+                findSolution(binaryMatrix, element, xSolution, isNotZero)
+                break
+            elif np.count_nonzero(binaryMatrix) == 0:
+                isNotZero = False
+                print(xSolution)
+                break
+
+    print('return')
+    return binaryMatrix, xSolution
+
 
 def getRowIndex(matrix, findRow):
     counter = 0
@@ -134,7 +227,6 @@ def getRowIndex(matrix, findRow):
             break
         else:
             counter += 1
-
     return counter
 
 def computeGCD(x, y):
@@ -184,45 +276,18 @@ def multiplicationOfSolutions(resultsVector):
 
 if __name__ == '__main__':
     nbrFactored = test_N
+    binaryM, chosen_r_values, listFactorized = (getFactorizedList())
+    bM, x = findSolution(binaryM)
+    print('bm: ', '\n', bM)
+    print('x: ', '\n', x)
+
     resultsVector = [[1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]]
-    prime1, prime2 = multiplicationOfSolutions(resultsVector)
+    resultsVector1 = [[0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0], [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
+    prime1, prime2 = multiplicationOfSolutions(resultsVector1)
     print('Prime factor 1: ', prime1)
     print('Prime factor 2: ', prime2)
-    """
-    binaryMatrix = (getFactorizedList())
-    element = 0
-    rowCounterToRemove = 0
-
-    for row in binaryMatrix:
-        rowIterator = 0
-        print('row :', '\n', row)
 
 
-        try:
-            if row[element] == 1:
-                binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove+1], 0)
-                rowIterator = rowCounterToRemove+1
-                print('matrix: ', '\n', binaryMatrix)
-                print('editedmatrix: ', '\n', binaryMatrixEdited)
-                for row1 in binaryMatrixEdited:
-                    if row1[element] == 1:
-                        additionRow = np.array(row)
-                        additionRow1 = np.array(row1)
-                        binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
-                        # print(binaryMatrix)
-                    rowIterator += 1
-            else:
-                rowCounterToRemove += 1
-        # print(binaryMatrix, '\n')
-
-        except IndexError:
-            break
-
-        if rowIterator == (L - element):
-            binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
-            element += 1
-            rowCounterToRemove = 0
-"""
 
 
 
