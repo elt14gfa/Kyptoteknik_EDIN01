@@ -6,10 +6,10 @@ from operator import mul
 from operator import add
 
 our_N = 170527948450228765165631
-test_N = 16637
-L = 12
+test_N = 323
+L = 1000
 F = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-
+xStore = []
 
 # Store the first 'numberOfPrimes' prime numbers
 def storePrimes(numberOfPrimes):
@@ -24,7 +24,6 @@ def storePrimes(numberOfPrimes):
             primes.append(potentialPrime)
         if len(primes) == numberOfPrimes:
             break
-
     return primes
 
 
@@ -43,7 +42,6 @@ def primeFactorization(number, primeFactors=[], prodAllFact=1):
                     prodAllFact *= potentialPrime
                     primeFactorization(number, primeFactors, prodAllFact)
                     break
-
     return primeFactors
 
 #print(binaryMatrix(listOfR))
@@ -51,11 +49,11 @@ def primeFactorization(number, primeFactors=[], prodAllFact=1):
 def newRFitForMatrix(rVector):
     nbrPrimes = storePrimes(1000)
 
-    binaryVector = np.zeros((len(F)))
+    binaryVector = np.zeros((len(nbrPrimes)))
     count = 0
     oddOrEven = 0
     for j in range(0, len(rVector)):
-        if rVector[j] == F[count]:
+        if rVector[j] == nbrPrimes[count]:
             oddOrEven += 1
 
         else:
@@ -71,7 +69,7 @@ def newRFitForMatrix(rVector):
                 if rVector[j + 1] != None:
                     pass
             except IndexError:
-                if rVector[j] == F[count]:
+                if rVector[j] == nbrPrimes[count]:
                     binaryVector[count] = 1
     return binaryVector
 
@@ -82,112 +80,63 @@ def getFactorizedList():
     binaryM = None
     #binaryM = np.zeros((1, len(F)))
     counter = 0
-   # for k in range(2, 20):
-   #     for j in range(2, 15):
-    #r = int(math.sqrt(k * test_N)) + j
-    r1 = [225,261,291,292,317,343,413,431,458,469,473,395,490]
-    for r in r1:
-        list = []
-        rsquared_modN = (r * r) % test_N
-        factorized = primeFactorization(rsquared_modN, list)
-        for prime in factorized:
-            isValid = True
-            if prime not in F:
-                isValid = False
-        if isValid and counter <= L - 1 and factorized not in listFactorized:
-            binaryR = newRFitForMatrix(factorized)
-            if not any((binaryR == x).all() for x in listOfBinaryR): # checks if the binary row already exists in the list
-                chosen_r_values.append(r)
-                listOfBinaryR.append(binaryR)
-                listFactorized.append(factorized)
-            if binaryM is None:
-                binaryM = binaryR
-                counter += 1
-            else:
-                if counter == 1:
-                    if np.array_equal(binaryR,binaryM):
-                        exists = True
-                    else:
-                        exists = False
-                else:
-                    for row in binaryM:
-                        exists = False
-                       # if (binaryR == row).all():
-                        if np.array_equal(binaryR,row):
-                            exists = True
-                            break
-                # print('binary R: ', binaryR)
-                if exists == False:
-                    binaryM = np.vstack([binaryM, binaryR])
+    for k in range(2, 20):
+        for j in range(2, 15):
+            r = int(math.sqrt(k * test_N)) + j
+            list = []
+            rsquared_modN = (r * r) % test_N
+            factorized = primeFactorization(rsquared_modN, list)
+            for prime in factorized:
+                isValid = True
+                if prime not in F:
+                    isValid = False
+            if isValid and counter <= L - 1 and factorized not in listFactorized:
+                binaryR = newRFitForMatrix(factorized)
+                if not any((binaryR == x).all() for x in listOfBinaryR): # checks if the binary row already exists in the list
+                    chosen_r_values.append(r)
+                    listOfBinaryR.append(binaryR)
+                    listFactorized.append(factorized)
+                if binaryM is None:
+                    binaryM = binaryR
                     counter += 1
+                else:
+                    if counter == 1:
+                        if np.array_equal(binaryR,binaryM):
+                            exists = True
+                        else:
+                            exists = False
+                    else:
+                        for row in binaryM:
+                            exists = False
+                           # if (binaryR == row).all():
+                            if np.array_equal(binaryR,row):
+                                exists = True
+                                break
+                    # print('binary R: ', binaryR)
+                    if exists == False:
+                        binaryM = np.vstack([binaryM, binaryR])
+                        counter += 1
 
     return binaryM, chosen_r_values, listFactorized
-
-"""
-def findSolution(binaryMatrix):
-
-        element = 0
-        rowCounterToRemove = 0
-        print('first binaryM: ', '\n', binaryMatrix)
-        for row in binaryMatrix:
-            rowIterator = 0
-            #print('row :', '\n', row)
-            try:
-                if row[element] == 1:
-                    binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove+1], 0)
-                    rowIterator = rowCounterToRemove+1
-                    print('matrix: ', '\n', binaryMatrix)
-                    print('editedmatrix: ', '\n', binaryMatrixEdited)
-                    for row1 in binaryMatrixEdited:
-                        if row1[element] == 1:
-                            additionRow = np.array(row)
-                            additionRow1 = np.array(row1)
-                            print('additionRow: ', '\n', additionRow)
-                            print('additionRow1: ', '\n', additionRow1)
-                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
-                            # print(binaryMatrix)
-                        rowIterator += 1
-                else:
-                    rowCounterToRemove += 1
-            # print(binaryMatrix, '\n')
-
-            except IndexError:
-                break
-
-            if rowIterator == (L - element):
-                binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
-                element += 1
-                rowCounterToRemove = 0
-                print('The final binary matrix: ', '\n', binaryMatrix)
-
-        return binaryMatrix
-"""
 
 
 def findSolution(binaryMatrix, element = 0, xSolution = np.eye(L,L), isNotZero = True):
     rowCounterToRemove = 0
+    nbrPrimes = storePrimes(1000)
 
-    print('first binaryM: ', '\n', binaryMatrix)
-    if L - len(F) != len(binaryMatrix) or isNotZero:
-        print('isNotZero')
+    if L - len(nbrPrimes) != len(binaryMatrix) or isNotZero:
         for row in binaryMatrix:
             rowIterator = 0
-            # print('row :', '\n', row)
             try:
                 if row[element] == 1:
                     binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove + 1], 0)
                     rowIterator = rowCounterToRemove + 1
-                    #print('matrix: ', '\n', binaryMatrix)
-                    #print('editedmatrix: ', '\n', binaryMatrixEdited)
                     for row1 in binaryMatrixEdited:
                         if row1[element] == 1:
                             additionRow = np.array(row)
                             additionRow1 = np.array(row1)
-                            #print('additionRow: ', '\n', additionRow)
-                            #print('additionRow1: ', '\n', additionRow1)
                             binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
                             xSolution[rowIterator] = (xSolution[rowIterator] + xSolution[rowCounterToRemove]) % 2
-                            # print(binaryMatrix)
                         rowIterator += 1
                 else:
                     rowCounterToRemove += 1
@@ -201,33 +150,20 @@ def findSolution(binaryMatrix, element = 0, xSolution = np.eye(L,L), isNotZero =
                 binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
                 element += 1
                 rowCounterToRemove = 0
-                print('The final binary matrix: ', '\n', binaryMatrix)
                 findSolution(binaryMatrix, element, xSolution, isNotZero)
                 break
             elif rowCounterToRemove == len(binaryMatrix):
-                print(element, rowCounterToRemove)
                 element += 1
                 rowCounterToRemove = 0
-                print('The final binary matrix1: ', '\n', binaryMatrix)
                 findSolution(binaryMatrix, element, xSolution, isNotZero)
                 break
             elif np.count_nonzero(binaryMatrix) == 0:
+                xStore.append(xSolution)
                 isNotZero = False
-                print(xSolution)
-                break
+                return xSolution
 
-    print('return')
-    return binaryMatrix, xSolution
+    return xStore
 
-
-def getRowIndex(matrix, findRow):
-    counter = 0
-    for row in matrix:
-        if np.array_equal(row, findRow):
-            break
-        else:
-            counter += 1
-    return counter
 
 def computeGCD(x, y):
     if x > y:
@@ -241,6 +177,7 @@ def computeGCD(x, y):
     return gcd
 
 def multiplicationOfSolutions(resultsVector):
+    print(resultsVector)
     prime_factor1 = 0
     prime_factor2 = 0
     matrix, r_values, factorized_values = getFactorizedList()
@@ -277,13 +214,11 @@ def multiplicationOfSolutions(resultsVector):
 if __name__ == '__main__':
     nbrFactored = test_N
     binaryM, chosen_r_values, listFactorized = (getFactorizedList())
-    bM, x = findSolution(binaryM)
-    print('bm: ', '\n', bM)
-    print('x: ', '\n', x)
+    x = findSolution(binaryM)[0]
 
-    resultsVector = [[1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]]
-    resultsVector1 = [[0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0], [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
-    prime1, prime2 = multiplicationOfSolutions(resultsVector1)
+    #resultsVector = [[1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]]
+    #resultsVector1 = [[0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0], [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
+    prime1, prime2 = multiplicationOfSolutions(x)
     print('Prime factor 1: ', prime1)
     print('Prime factor 2: ', prime2)
 
