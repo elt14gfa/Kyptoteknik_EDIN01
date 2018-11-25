@@ -26,6 +26,7 @@ def storePrimes(numberOfPrimes):
             break
     return primes
 
+nbrPrimes = storePrimes(990)
 
 def primeFactorization(number, primeFactors=[], prodAllFact=1):
 
@@ -47,7 +48,7 @@ def primeFactorization(number, primeFactors=[], prodAllFact=1):
 #print(binaryMatrix(listOfR))
 
 def newRFitForMatrix(rVector):
-    nbrPrimes = storePrimes(1000)
+    nbrPrimes = storePrimes(990)
 
     binaryVector = np.zeros((len(nbrPrimes)))
     count = 0
@@ -62,7 +63,7 @@ def newRFitForMatrix(rVector):
             oddOrEven = 1
             count += 1
 
-            while rVector[j] != F[count]:
+            while rVector[j] != nbrPrimes[count]:
                 oddOrEven = 1
                 count += 1
             try:
@@ -74,6 +75,7 @@ def newRFitForMatrix(rVector):
     return binaryVector
 
 def getFactorizedList():
+    #nbrPrimes
     listFactorized = []
     listOfBinaryR = []
     chosen_r_values = []
@@ -88,7 +90,7 @@ def getFactorizedList():
             factorized = primeFactorization(rsquared_modN, list)
             for prime in factorized:
                 isValid = True
-                if prime not in F:
+                if prime not in nbrPrimes:
                     isValid = False
             if isValid and counter <= L - 1 and factorized not in listFactorized:
                 binaryR = newRFitForMatrix(factorized)
@@ -121,8 +123,8 @@ def getFactorizedList():
 
 
 def findSolution(binaryMatrix, element = 0, xSolution = np.eye(L,L), isNotZero = True):
+    #nbrPrimes
     rowCounterToRemove = 0
-    nbrPrimes = storePrimes(1000)
 
     if L - len(nbrPrimes) != len(binaryMatrix) or isNotZero:
         for row in binaryMatrix:
@@ -176,11 +178,10 @@ def computeGCD(x, y):
 
     return gcd
 
-def multiplicationOfSolutions(resultsVector):
-    print(resultsVector)
+def multiplicationOfSolutions(resultsVector, r_values, factorized_values):
+    print('resultVector :', '\n', resultsVector)
     prime_factor1 = 0
     prime_factor2 = 0
-    matrix, r_values, factorized_values = getFactorizedList()
     print('Values of r: ', r_values)
     print('factorized_values: ', factorized_values)
     for xresult in resultsVector:
@@ -214,11 +215,14 @@ def multiplicationOfSolutions(resultsVector):
 if __name__ == '__main__':
     nbrFactored = test_N
     binaryM, chosen_r_values, listFactorized = (getFactorizedList())
+    print('bM', binaryM)
+    print('r_values', chosen_r_values)
+    print('list', listFactorized)
     x = findSolution(binaryM)[0]
 
     #resultsVector = [[1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0]]
     #resultsVector1 = [[0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0], [1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]]
-    prime1, prime2 = multiplicationOfSolutions(x)
+    prime1, prime2 = multiplicationOfSolutions(x, chosen_r_values, listFactorized)
     print('Prime factor 1: ', prime1)
     print('Prime factor 2: ', prime2)
 
