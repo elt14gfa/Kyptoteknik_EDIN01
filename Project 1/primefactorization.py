@@ -10,11 +10,10 @@ from collections import Counter
 
 our_N = 170527948450228765165631
 test_N = 392742364277
-L = 100
-F = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+L = 700
 xStore = []
 
-# Store the first 'numberOfPrimes' prime numbers
+# Store the first 'numberOfPrimes' prime numbers, maximum up to the 990th prime
 def storePrimes(numberOfPrimes):
     primes = []
     for potentialPrime in range(2, 7829 + 1):
@@ -29,7 +28,7 @@ def storePrimes(numberOfPrimes):
             break
     return primes
 
-def primeFactorization2(number):
+def primeFactorization(number):
     initNbr = number
     potentialPrimes = []
     prodAllPrimes = 1
@@ -48,27 +47,6 @@ def primeFactorization2(number):
         potentialPrimes.append(initNbr)
         return potentialPrimes
 
-def primeFactorization(number, primeFactors=[], prodAllFact=1):
-
-    if prodAllFact != nbrFactored:
-        a = int(math.sqrt(number))
-        for potentialPrime in range(1, int(math.sqrt(number)) + 1):
-            counter_divisions = 0
-            if number % potentialPrime == 0:
-                for j in range(1, potentialPrime + 1):
-                    if potentialPrime % j == 0:
-                        counter_divisions += 1
-                if counter_divisions == 2:
-                    primeFactors.append(potentialPrime)
-                    number = int(number / potentialPrime)
-                    prodAllFact *= potentialPrime
-                    primeFactorization(number, primeFactors, prodAllFact)
-                    break
-    if(len(primeFactors ) == 0):
-        primeFactors.append(number)
-    return primeFactors
-
-#print(binaryMatrix(listOfR))
 
 def newRFitForMatrix(rVector):
 
@@ -117,8 +95,7 @@ def getFactorizedList():
             r = int(math.sqrt(k * test_N)) + j
             list = []
             rsquared_modN = (r * r) % test_N
-            #factorized = primeFactorization(rsquared_modN, list)
-            factorized = primeFactorization2(rsquared_modN)
+            factorized = primeFactorization(rsquared_modN)
             isValid = True
             if factorized[-1] <= maxPrime:
                 isValid = False
@@ -145,7 +122,6 @@ def getFactorizedList():
                             if np.array_equal(binaryR,row):
                                 exists = True
                                 break
-                    # print('binary R: ', binaryR)
                     if exists == False:
                         binaryM = np.vstack([binaryM, binaryR])
 
@@ -158,71 +134,6 @@ def getFactorizedList():
 
 def findSolution(binaryMatrix, element=0, xSolution=np.eye(L, L), isNotZero=True):
     rowCounterToRemove = 0
-    # r,c = np.shape(binaryMatrix)
-    # if element == 0 and r != L-1:
-    #    appendMatrix = np.zeros((L - 1 - r, c))
-    #    binaryMatrix = np.vstack([binaryMatrix, appendMatrix])
-    if L - len(nbrPrimes) != len(binaryMatrix) or isNotZero:
-
-        for row in binaryMatrix:
-            rowIterator = 0
-            try:
-                if row[element] == 1:
-                    binaryMatrixEdited = np.delete(binaryMatrix, np.s_[0:rowCounterToRemove + 1], 0)
-                    rowIterator = rowCounterToRemove + 1
-                    for row1 in binaryMatrixEdited:
-                        if row1[element] == 1:
-                            additionRow = np.array(row)
-                            additionRow1 = np.array(row1)
-                            binaryMatrix[rowIterator] = (additionRow + additionRow1) % 2
-                            xSolution[rowIterator] = (xSolution[rowIterator] + xSolution[rowCounterToRemove]) % 2
-                        rowIterator += 1
-                else:
-                    rowCounterToRemove += 1
-            # print(binaryMatrix, '\n')
-
-            except IndexError:
-                break
-
-            if element % 50 == 0:
-                print('element', element)
-
-            if rowIterator == len(binaryMatrix) and np.count_nonzero(binaryMatrix) != 0:
-                xSolution = np.delete(xSolution, rowCounterToRemove, 0)
-                binaryMatrix = np.delete(binaryMatrix, rowCounterToRemove, 0)
-                if np.count_nonzero(binaryMatrix) == 0:
-                    xStore.append(xSolution)
-                    isNotZero = False
-                    break
-                rowCounterToRemove = 0
-                element += 1
-
-                findSolution(binaryMatrix, element, xSolution, isNotZero)
-                break
-            elif rowCounterToRemove == len(binaryMatrix):
-                # print('element: ', element)
-                element += 1
-                rowCounterToRemove = 0
-                if np.count_nonzero(binaryMatrix) == 0:
-                    print(binaryMatrix)
-                findSolution(binaryMatrix, element, xSolution, isNotZero)
-                break
-            elif np.count_nonzero(binaryMatrix) == 0:
-                xStore.append(xSolution)
-                isNotZero = False
-                return xSolution
-
-    return xStore
-
-
-def findSolution1(binaryMatrix, element=0, xSolution=np.eye(L, L), isNotZero=True):
-    rowCounterToRemove = 0
-    # r,c = np.shape(binaryMatrix)
-    # if element == 0 and r != L-1:
-    #    appendMatrix = np.zeros((L - 1 - r, c))
-    #    binaryMatrix = np.vstack([binaryMatrix, appendMatrix])
-    #if element % 25 == 0:
-    #    print('element', element)
     if L - len(nbrPrimes) != len(binaryMatrix) or isNotZero:
         try:
             arrCheckForOnes = np.count_nonzero(binaryMatrix[:, element])
@@ -254,15 +165,13 @@ def findSolution1(binaryMatrix, element=0, xSolution=np.eye(L, L), isNotZero=Tru
                             xStore.append(xSolution)
                             isNotZero = False
                             break
-                        print(element)
                         element += 1
-                        findSolution1(binaryMatrix, element, xSolution, isNotZero)
+                        findSolution(binaryMatrix, element, xSolution, isNotZero)
                         break
                     else:
                         rowCounterToRemove += 1
                 # print(binaryMatrix, '\n')
             else:
-                print(element)
                 element += 1
                 rowCounterToRemove = 0
                 if np.count_nonzero(binaryMatrix) == 0:
@@ -270,38 +179,11 @@ def findSolution1(binaryMatrix, element=0, xSolution=np.eye(L, L), isNotZero=Tru
                 if np.count_nonzero(binaryMatrix) == 0:
                     isNotZero = False
                 else:
-                    findSolution1(binaryMatrix, element, xSolution, isNotZero)
+                    findSolution(binaryMatrix, element, xSolution, isNotZero)
         except IndexError:
             return xStore
 
     return xStore
-
-
-"""
-def sqrtOfList(factorizedValue = []):
-
-    oddOrEven = 1
-    prime = 1
-    if (len(factorizedValue) > 1):
-        for factorizedIndex in range(0, len(factorizedValue) + 1):
-            if prime == factorizedValue[factorizedIndex]:
-                oddOrEven += 1
-                if oddOrEven % 2 == 0:
-                    factorizedValue.remove(prime)
-                    oddOrEven = 1
-            elif prime != factorizedValue[factorizedIndex]
-            prime = factorizedValue[factorizedIndex]
-    return factorizedValue
-"""
-
-def sqrtOfList1(factorizedValue = []):
-
-    oddOrEven = 1
-    prime = 1
-
-
-    return factorizedValue
-
 
 def multiplicationOfSolutions(resultsVector, r_values, factorized_values):
     prime_factor1 = 0
@@ -386,7 +268,7 @@ if __name__ == '__main__':
             # Your statements here
             r, c = np.shape(binaryM)
             start1 = timeit.default_timer()
-            x = findSolution1(binaryM, 0, np.eye(r, r))[0]
+            x = findSolution(binaryM, 0, np.eye(r, r))[0]
             stop1 = timeit.default_timer()
             print('Time solution: ', stop1 - start1)
             print('shape of x', np.shape(x))
@@ -399,6 +281,8 @@ if __name__ == '__main__':
             print('Time multi: ', stop2 - start2)
             print('Prime factor 1: ', prime1)
             print('Prime factor 2: ', prime2)
+            if prime1 * prime2 == test_N:
+                print('Successfully prime factorized')
     else:
         print('not enough values')
 
