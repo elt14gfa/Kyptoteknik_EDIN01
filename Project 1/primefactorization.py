@@ -5,11 +5,12 @@ import functools
 from operator import mul
 from operator import add
 import timeit
+from collections import Counter
 
 
 our_N = 170527948450228765165631
 test_N = 392742364277
-L = 700
+L = 100
 F = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 xStore = []
 
@@ -106,8 +107,8 @@ def getFactorizedList():
     #binaryM = np.zeros((1, len(F)))
     counter = 1
     enter = True
-    for k in range(2, 200):
-        for j in range(2, 180):
+    for k in range(2, 110):
+        for j in range(2, 95):
             if counter == L+1:
                 break
             if counter % 75 == 0 and enter == True:
@@ -307,46 +308,44 @@ def multiplicationOfSolutions(resultsVector, r_values, factorized_values):
     prime_factor2 = 0
     print(np.shape(factorized_values))
     for xresult in resultsVector:
+        y_exponents = Counter()
+        half_y = Counter()
+        y_product = 1
         y_sqrt = 1
         r = 1
         y= 1
         counter = 0
         for index in xresult:
             if index == 1:
-
-                yEdited = int(math.sqrt(functools.reduce(mul, factorized_values[counter], 1)))
+                y_exponents += Counter(factorized_values[counter])
+                yEdited = math.sqrt(functools.reduce(mul, factorized_values[counter], 1))
                 y *= yEdited
                 #y *= functools.reduce(mul, factorized_values[counter]) # product of array
                 #y = int(math.sqrt(int(y)) % test_N)
                 #y = int(math.sqrt(y))
                 r *= r_values[counter]
             counter += 1
-        """
-        Roten ur y efter varje multiplikation sen ta module N innan man multiplicerar med nästa tal.
-        """
-        """
-        
-        #y_modulo = y
-        y_sqrt = int(math.sqrt(y))
-        y_modulo = int(y_sqrt % test_N)
-        print('y_module: ', y_modulo)
-        #y_sqrt = int(math.sqrt(int(y)))
-        """
 
-        y_modulo = int(y_sqrt % test_N)
-        y_modulo = y % test_N
+        for prime in nbrPrimes:
+            y_exponents[prime] = int(y_exponents[prime]/2)
+            y_product *= prime**y_exponents[prime]
+
+        y_modulo_new = y_product % test_N
+        # y_modulo = int(y_sqrt % test_N)
+        # y_modulo = y % test_N
         r_modulo = r % test_N
 
         #y_sqrt = int(math.sqrt(y))
         #y_modulo = int(y % test_N)
 
-        if y_modulo > r_modulo:
+        if y_modulo_new > r_modulo:
 
             # result = computeGCD(y_modulo - r_modulo, test_N)
-            result = gcd(y_modulo - r_modulo, test_N)
+            result = gcd(y_modulo_new - r_modulo, test_N)
         else:
             # result = computeGCD(r_modulo - y_modulo, test_N)
-            result = gcd(r_modulo - y_modulo, test_N)
+            print('r_modulo: ', r_modulo, ' y_modulo: ', y_modulo_new)
+            result = gcd(r_modulo - y_modulo_new, test_N)
 
         if result != 1:
             prime_factor1 = int(test_N / result)
