@@ -8,8 +8,8 @@ import timeit
 
 
 our_N = 170527948450228765165631
-test_N = 3205837387
-L = 1000
+test_N = 392742364277
+L = 700
 F = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
 xStore = []
 
@@ -106,8 +106,8 @@ def getFactorizedList():
     #binaryM = np.zeros((1, len(F)))
     counter = 1
     enter = True
-    for k in range(2, 500):
-        for j in range(2, 400):
+    for k in range(2, 200):
+        for j in range(2, 180):
             if counter == L+1:
                 break
             if counter % 75 == 0 and enter == True:
@@ -273,9 +273,6 @@ def findSolution1(binaryMatrix, element=0, xSolution=np.eye(L, L), isNotZero=Tru
         except IndexError:
             return xStore
 
-
-
-
     return xStore
 
 
@@ -317,7 +314,7 @@ def multiplicationOfSolutions(resultsVector, r_values, factorized_values):
         for index in xresult:
             if index == 1:
 
-                yEdited = int(math.sqrt(functools.reduce(mul, factorized_values[counter], 1))) % test_N
+                yEdited = int(math.sqrt(functools.reduce(mul, factorized_values[counter], 1)))
                 y *= yEdited
                 #y *= functools.reduce(mul, factorized_values[counter]) # product of array
                 #y = int(math.sqrt(int(y)) % test_N)
@@ -335,6 +332,8 @@ def multiplicationOfSolutions(resultsVector, r_values, factorized_values):
         print('y_module: ', y_modulo)
         #y_sqrt = int(math.sqrt(int(y)))
         """
+
+        y_modulo = int(y_sqrt % test_N)
         y_modulo = y % test_N
         r_modulo = r % test_N
 
