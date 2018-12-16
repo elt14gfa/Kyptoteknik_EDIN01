@@ -1,5 +1,7 @@
 import numpy as np
-
+import pickle
+import re
+import string
 
 
 
@@ -38,7 +40,7 @@ def dB_z2 (initState = [0,0,0,1], iterations = 10003, feedback = [1,0,0,1]):
 
 def dB_z5 (initState = [0,0,0,0], iterations = 10003):
     currentState = initState
-    specialState1 = [1,0,0,0]
+    specialState1 = [2,0,0,0]
     specialState2 = [0,0,0,0]
     deBruijn_z5 = []
     stateList = []
@@ -53,12 +55,12 @@ def dB_z5 (initState = [0,0,0,0], iterations = 10003):
 
         if currentState not in stateList:
             stateList.append(currentState)
-        """
+
         if np.array_equal(currentState, specialState1):
             c0 = currentState[0]
             currentState = [0,0,0,0]
-        """
-        if np.array_equal(currentState, specialState2):
+
+        elif np.array_equal(currentState, specialState2):
             c0 = currentState[0]
             currentState = [0,0,0,1]
 
@@ -75,6 +77,8 @@ def dB_z5 (initState = [0,0,0,0], iterations = 10003):
 
     return deBruijn_z5, stateList
 
+
+
 def db_z10(dbSeq_z2,dbSeq_z5):
     deBruijn_z10 = []
 
@@ -82,9 +86,6 @@ def db_z10(dbSeq_z2,dbSeq_z5):
         deBruijn_z10.append(z2 + z5*2)
 
     return deBruijn_z10
-
-
-
 
 if __name__ == '__main__':
     deBruin_z2, stateList1 = dB_z2()
@@ -100,13 +101,30 @@ if __name__ == '__main__':
     print('Z5')
     print(deBruijn_z5)
 
-    print(stateList1, '\n')
+    print(stateList2, '\n')
     print('stateList2z5:', len(stateList2))
     print('lenDeBruijnz5:', len(deBruijn_z5), '\n')
+    print(stateList2[-1])
     print('------------')
 
     deBruijn_z10 = db_z10(deBruin_z2,deBruijn_z5)
     print('Z10')
     print(deBruijn_z10)
-    print('------------')
     print('lenDeBruijnz10:', len(deBruijn_z10))
+
+    stringSeq = ''
+    for i in deBruijn_z10:
+        element = str(i)
+        stringSeq += element
+    with open('stringSeq', 'w') as f:
+        f.write(stringSeq)
+
+    listChecker = []
+
+    for i in range(0,10000):
+        current = [deBruijn_z10[i], deBruijn_z10[i+1], deBruijn_z10[i+2], deBruijn_z10[i+3]]
+        if current not in listChecker:
+            print('not in listCHecker:', current)
+            listChecker.append(current)
+        else:
+            print('already in clistchecker:', current)
