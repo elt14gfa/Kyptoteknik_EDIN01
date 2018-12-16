@@ -12,7 +12,7 @@ def dB_z2 (initState = [0,0,0,1], iterations = 10003, feedback = [1,0,0,1]):
 
     #x^4 + x^3 + 1
 
-    for iter in range(1,iterations):
+    for iter in range(0,iterations):
 
         if currentState not in stateList:
             stateList.append(currentState)
@@ -40,17 +40,16 @@ def dB_z5 (initState = [0,0,0,0], iterations = 10003):
     currentState = initState
     specialState1 = [1,0,0,0]
     specialState2 = [0,0,0,0]
-    deBruijn_z2 = []
+    deBruijn_z5 = []
     stateList = []
 
-    polyC0 = 1
-    polyC1 = 2
-    polyC2 = 2
+    #equation x^4+x^2+2x+2
 
+    polyC0 = 3  #-2 mod 5
+    polyC1 = 3  #-2 mod 5
+    polyC2 = 4  #-1 mod 5
 
-    #x^4 + x^3 + 1
-
-    for iter in range(1,iterations):
+    for iter in range(0,iterations):
 
         if currentState not in stateList:
             stateList.append(currentState)
@@ -69,24 +68,45 @@ def dB_z5 (initState = [0,0,0,0], iterations = 10003):
             c2 = currentState[2]
             c3 = currentState[3]
             currentState = currentState[1:]
-            currentState.append((c0 + 1*c1 + 2*c2 + c3*2) % 5)
+            currentState.append((polyC0*c0 + polyC1*c1 + polyC2*c2) % 5)
 
 
-        deBruijn_z2.append(c0)
+        deBruijn_z5.append(c0)
 
-    return deBruijn_z2, stateList
+    return deBruijn_z5, stateList
+
+def db_z10(dbSeq_z2,dbSeq_z5):
+    deBruijn_z10 = []
+
+    for z2, z5 in zip(dbSeq_z2,dbSeq_z5):
+        deBruijn_z10.append(z2 + z5*2)
+
+    return deBruijn_z10
+
+
 
 
 if __name__ == '__main__':
     deBruin_z2, stateList1 = dB_z2()
     print('Z2')
     print(deBruin_z2)
-    print('------------')
-    print(stateList1,'\n')
 
-    deBruin_z5, stateList2 = dB_z5()
-    print('Z5')
-    print(deBruin_z5)
+    print(stateList1,'\n')
+    print('lenStateList1z2:', len(stateList1))
+    print('lenDeBruijnz2:', len(deBruin_z2), '\n')
     print('------------')
-    print(stateList2)
-    print(len(stateList2))
+
+    deBruijn_z5, stateList2 = dB_z5()
+    print('Z5')
+    print(deBruijn_z5)
+
+    print(stateList1, '\n')
+    print('stateList2z5:', len(stateList2))
+    print('lenDeBruijnz5:', len(deBruijn_z5), '\n')
+    print('------------')
+
+    deBruijn_z10 = db_z10(deBruin_z2,deBruijn_z5)
+    print('Z10')
+    print(deBruijn_z10)
+    print('------------')
+    print('lenDeBruijnz10:', len(deBruijn_z10))
